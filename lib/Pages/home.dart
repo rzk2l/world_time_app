@@ -13,7 +13,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     try {
-      data = ModalRoute.of(context)!.settings.arguments as Map;
+      data = data.isNotEmpty
+          ? data
+          : ModalRoute.of(context)!.settings.arguments as Map;
     } catch (error) {
       data = data;
     }
@@ -38,8 +40,17 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               children: [
                 TextButton.icon(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/location');
+                  onPressed: () async {
+                    dynamic result =
+                        await Navigator.pushNamed(context, '/location');
+                    setState(() {
+                      data = {
+                        'location': result['location'],
+                        'time': result['time'],
+                        'flagUrl': result['flagUrl'],
+                        'isDaytime': result['isDaytime'],
+                      };
+                    });
                   },
                   icon: Icon(
                     Icons.edit_location,
